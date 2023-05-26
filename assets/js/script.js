@@ -39,7 +39,7 @@ function SearchFormSubmit(event) {
         return;
     }
 
-    var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + cityInputVal + "&appid=" + APIKey + "&units=imperial";
+    var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityInputVal + "&appid=" + APIKey + "&units=imperial";
 
     fetch(queryURL)
         .then(function (response) {
@@ -64,7 +64,7 @@ function SearchFormSubmit(event) {
 
 
         }).then(function () {
-            var forcast = "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey + "&units=imperial";
+            var forcast = "https://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey + "&units=imperial";
             fetch(forcast)
                 .then(function (response) {
                     if (response.ok) {
@@ -112,7 +112,7 @@ function SearchFormSubmit(event) {
     function pastFormSubmit() {
         $('.card').empty();
         $('.current').empty();
-        var pastQueryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + pastButton.innerHTML + "&appid=" + APIKey + "&units=imperial";
+        var pastQueryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + pastButton.innerHTML + "&appid=" + APIKey + "&units=imperial";
 
         fetch(pastQueryURL)
         .then(function (response) {
@@ -137,7 +137,7 @@ function SearchFormSubmit(event) {
 
 
         }).then(function () {
-            var forcast = "http://api.openweathermap.org/data/2.5/forecast?lat=" + pastcityLat + "&lon=" + pastcityLon + "&appid=" + APIKey + "&units=imperial";
+            var forcast = "https://api.openweathermap.org/data/2.5/forecast?lat=" + pastcityLat + "&lon=" + pastcityLon + "&appid=" + APIKey + "&units=imperial";
             fetch(forcast)
                 .then(function (response) {
                     if (response.ok) {
