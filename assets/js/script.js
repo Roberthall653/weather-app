@@ -58,33 +58,38 @@ function SearchFormSubmit(event) {
             console.log(icon = data.weather[0].icon);
             $('#wicon').attr('src', iconURL);
         }).then(function () {
+            iconURL = 'https://openweathermap.org/img/wn/' + icon + '.png';
             var forcast = "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey + "&units=imperial";
             fetch(forcast)
                 .then(function (response) {
                     if (response.ok) {
                         console.log(response);
                         return response.json()
-                        // .then(function (data) {
-                        //     console.log(data);
-                        //     var list = data.list;
-                        //     for (i=0; i<list.length; i+=6)
-
-
-                        // });
+                            .then(function (data) {
+                                console.log(data);
+                                var list = data.list;
+                                for (i = 3; i < list.length; i += 8) {
+                                    forcastTemp = (list[i].main.temp);
+                                    forcastWind = (list[i].wind.speed);
+                                    forcastHumidity = (list[i].main.humidity);
+                                    forcastDate = (list[i].dt_txt)
+                                    console.log(forcastTemp)
+                                    $(".card").append('<h3>' + ' (' + forcastDate + ')<img id="wicon" src="" alt="Weather icon">')
+                                    $('#wicon').attr('src', iconURL);
+                                    $(".card").append('<li>Temp: ' + forcastTemp + '°F</li>');
+                                    $(".card").append('<li>Wind: ' + forcastWind + 'MPH</li>');
+                                    $(".card").append('<li>Humidity: ' + forcastHumidity + '%</li>');
+                                }
+                            });
                     }
                 });
         }).then(function () {
+            $("#result-text").append('<h3>' + resultText + ' (' + currentDate + ')<img id="wicon" src="" alt="Weather icon">')
             $(".current").append('<li>Temp: ' + currentTemp + '°F</li>');
             $(".current").append('<li>Wind: ' + currentWind + 'MPH</li>');
             $(".current").append('<li>Humidity: ' + currentHumidity + '%</li>');
             console.log(currentTemp)
-        })
-        // .then(function () {
-        //     $(".current").append('<li>Temp: ' + forcastTemp + '°F</li>');
-        //     $(".current").append('<li>Wind: ' + forcastWind + 'MPH</li>');
-        //     $(".current").append('<li>Humidity: ' + forcastHumidity + '%</li>');
-        //     console.log(currentTemp)
-        // });
+        });
 
 
 
