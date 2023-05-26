@@ -3,6 +3,7 @@ var searchBarEl = document.querySelector('#search-bar');
 var cityStorage = [];
 var currentDay = dayjs().format('M/D/YYYY');
 var cityCoord = "";
+var pastcityCoord = "";
 
 
 function SearchFormSubmit(event) {
@@ -16,6 +17,8 @@ function SearchFormSubmit(event) {
     var pastButton = document.createElement('button');
     var cityLat = [];
     var cityLon = [];
+    var pastcityLat = [];
+    var pastcityLon = [];
     var currentTemp = "";
     var currentWind = "";
     var currentHumidity = "";
@@ -24,12 +27,13 @@ function SearchFormSubmit(event) {
     var forcastHumidity = [];
     var icon = '';
     var iconURL = '';
+    var forcastIcon = '';
     localStorage.setItem('City', resultText);
     cityStorage.push(resultText);
     console.log(cityStorage)
 
 
-
+    $('.card').empty();
     if (!cityInputVal) {
         console.error('You need a search input value!');
         return;
@@ -43,6 +47,8 @@ function SearchFormSubmit(event) {
                 console.log(response);
                 return response.json();
             }
+
+
         }).then(function (data) {
             console.log(data);
             cityCoord = data.coord;
@@ -53,12 +59,11 @@ function SearchFormSubmit(event) {
             currentWind = data.wind.speed;
             currentHumidity = data.main.humidity;
             icon = data.weather[0].icon
-
             iconURL = 'https://openweathermap.org/img/wn/' + icon + '.png';
-            console.log(icon = data.weather[0].icon);
             $('#wicon').attr('src', iconURL);
+
+
         }).then(function () {
-            iconURL = 'https://openweathermap.org/img/wn/' + icon + '.png';
             var forcast = "http://api.openweathermap.org/data/2.5/forecast?lat=" + cityLat + "&lon=" + cityLon + "&appid=" + APIKey + "&units=imperial";
             fetch(forcast)
                 .then(function (response) {
@@ -73,9 +78,11 @@ function SearchFormSubmit(event) {
                                     forcastWind = (list[i].wind.speed);
                                     forcastHumidity = (list[i].main.humidity);
                                     forcastDate = (list[i].dt_txt)
-                                    console.log(forcastTemp)
-                                    $(".card").append('<h3>' + ' (' + forcastDate + ')<img id="wicon" src="" alt="Weather icon">')
-                                    $('#wicon').attr('src', iconURL);
+                                    forcastIcon = (list[i].weather[0].icon)
+                                    var forcasticonURL = 'https://openweathermap.org/img/wn/' + forcastIcon + '.png';
+                                    console.log(forcastIcon)
+                                    $(".card").append('<h3>' + ' (' + forcastDate + ')<img id="ficon" src="" alt="Weather icon">')
+                                    $('#ficon').attr('src', forcasticonURL);
                                     $(".card").append('<li>Temp: ' + forcastTemp + '°F</li>');
                                     $(".card").append('<li>Wind: ' + forcastWind + 'MPH</li>');
                                     $(".card").append('<li>Humidity: ' + forcastHumidity + '%</li>');
@@ -84,6 +91,7 @@ function SearchFormSubmit(event) {
                     }
                 });
         }).then(function () {
+            currentDay = dayjs().format('M/D/YYYY');
             $("#result-text").append('<h3>' + resultText + ' (' + currentDate + ')<img id="wicon" src="" alt="Weather icon">')
             $(".current").append('<li>Temp: ' + currentTemp + '°F</li>');
             $(".current").append('<li>Wind: ' + currentWind + 'MPH</li>');
@@ -102,22 +110,69 @@ function SearchFormSubmit(event) {
 
     pastButton.addEventListener('click', pastFormSubmit);
     function pastFormSubmit() {
-        var queryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + pastButton.innerHTML + "&appid=" + APIKey + "&units=imperial";
+        $('.card').empty();
+        $('.current').empty();
+        var pastQueryURL = "http://api.openweathermap.org/data/2.5/weather?q=" + pastButton.innerHTML + "&appid=" + APIKey + "&units=imperial";
 
-        fetch(queryURL)
-            .then(function (response) {
-                if (response.ok) {
-                    console.log(response);
-                    response.json().then(function (data) {
-                        console.log(data);
-                    });
-                }
-            });
+        fetch(pastQueryURL)
+        .then(function (response) {
+            if (response.ok) {
+                console.log(response);
+                return response.json();
+            }
+
+
+        }).then(function (data) {
+            console.log(data);
+            pastcityCoord = data.coord;
+            JSON.stringify(cityCoord);
+            pastcityLat.push(pastcityCoord.lat);
+            pastcityLon.push(pastcityCoord.lon);
+            currentTemp = data.main.temp;
+            currentWind = data.wind.speed;
+            currentHumidity = data.main.humidity;
+            icon = data.weather[0].icon
+            iconURL = 'https://openweathermap.org/img/wn/' + icon + '.png';
+            $('#wicon').attr('src', iconURL);
+
+
+        }).then(function () {
+            var forcast = "http://api.openweathermap.org/data/2.5/forecast?lat=" + pastcityLat + "&lon=" + pastcityLon + "&appid=" + APIKey + "&units=imperial";
+            fetch(forcast)
+                .then(function (response) {
+                    if (response.ok) {
+                        console.log(response);
+                        return response.json()
+                            .then(function (data) {
+                                console.log(data);
+                                var list = data.list;
+                                for (i = 3; i < list.length; i += 8) {
+                                    forcastTemp = (list[i].main.temp);
+                                    forcastWind = (list[i].wind.speed);
+                                    forcastHumidity = (list[i].main.humidity);
+                                    forcastDate = (list[i].dt_txt)
+                                    forcastIcon = (list[i].weather[0].icon)
+                                    var forcasticonURL = 'https://openweathermap.org/img/wn/' + forcastIcon + '.png';
+                                    console.log(forcastIcon)
+                                    $(".card").append('<h3>' + ' (' + forcastDate + ')<img id="ficon" src="" alt="Weather icon">')
+                                    $('#ficon').attr('src', forcasticonURL);
+                                    $(".card").append('<li>Temp: ' + forcastTemp + '°F</li>');
+                                    $(".card").append('<li>Wind: ' + forcastWind + 'MPH</li>');
+                                    $(".card").append('<li>Humidity: ' + forcastHumidity + '%</li>');
+                                }
+                            });
+                    }
+                });
+        }).then(function () {
+            currentDay = dayjs().format('M/D/YYYY');
+            $("#result-text").append('<h3>' + resultText + ' (' + currentDate + ')<img id="wicon" src="" alt="Weather icon">')
+            $(".current").append('<li>Temp: ' + currentTemp + '°F</li>');
+            $(".current").append('<li>Wind: ' + currentWind + 'MPH</li>');
+            $(".current").append('<li>Humidity: ' + currentHumidity + '%</li>');
+            console.log(currentTemp)
+        })
     }
 
+
 }
-
-
-
 searchBarEl.addEventListener('submit', SearchFormSubmit);
-
